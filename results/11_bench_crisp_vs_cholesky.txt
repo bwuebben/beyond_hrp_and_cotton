@@ -1,0 +1,150 @@
+==============================================================================
+CRISP vs LAPACK Cholesky wall-clock benchmark
+==============================================================================
+Platform:  macOS-15.7.3-arm64-arm-64bit-Mach-O
+Processor: arm
+Python:    3.13.12
+NumPy:     2.4.4
+SciPy:     1.17.1
+Numba:     0.65.0
+
+NumPy BLAS/LAPACK configuration:
+------------------------------------------------------------------------------
+{
+  "Compilers": {
+    "c": {
+      "name": "clang",
+      "linker": "ld64",
+      "version": "15.0.0",
+      "commands": "cc"
+    },
+    "cython": {
+      "name": "cython",
+      "linker": "cython",
+      "version": "3.2.4",
+      "commands": "cython"
+    },
+    "c++": {
+      "name": "clang",
+      "linker": "ld64",
+      "version": "15.0.0",
+      "commands": "c++"
+    }
+  },
+  "Machine Information": {
+    "host": {
+      "cpu": "aarch64",
+      "family": "aarch64",
+      "endian": "little",
+      "system": "darwin"
+    },
+    "build": {
+      "cpu": "aarch64",
+      "family": "aarch64",
+      "endian": "little",
+      "system": "darwin"
+    }
+  },
+  "Build Dependencies": {
+    "blas": {
+      "name": "accelerate",
+      "found": true,
+      "version": "unknown",
+      "detection method": "system",
+      "include directory": "unknown",
+      "lib directory": "unknown",
+      "openblas configuration": "unknown",
+      "pc file directory": "unknown"
+    },
+    "lapack": {
+      "name": "accelerate",
+      "found": true,
+      "version": "unknown",
+      "detection method": "system",
+      "include directory": "unknown",
+      "lib directory": "unknown",
+      "openblas configuration": "unknown",
+      "pc file directory": "unknown"
+    }
+  },
+  "Python Information": {
+    "path": "/private/var/folders/bb/km69qtt53nlbxc29ljr4c9d00000gn/T/build-env-k6qgfs_2/bin/python",
+    "version": "3.13"
+  },
+  "SIMD Extensions": {
+    "baseline": [
+      "NEON",
+      "NEON_FP16",
+      "NEON_VFPV4",
+      "ASIMD"
+    ],
+    "found": [
+      "ASIMDHP",
+      "ASIMDDP"
+    ],
+    "not found": [
+      "ASIMDFHM"
+    ]
+  }
+}
+------------------------------------------------------------------------------
+
+CRISP parameters: gamma=0.5, p=100 sweeps
+Direct pipeline:  scipy.linalg Cholesky (cho_factor + cho_solve)
+
+==============================================================================
+SINGLE-SOLVE WALL-CLOCK (median over trials, milliseconds)
+==============================================================================
+     N     Cholesky    CRISP-numba     CRISP-py   ratio(py/chol)  ratio(numba/chol)
+-----------------------------------------------------------------------------------
+   100        0.025          0.590        6.086           241.8x             23.46x
+   200        0.063          2.570       12.598           201.6x             41.11x
+   500        0.384         18.198       33.376            86.8x             47.33x
+  1000        1.923         76.337      145.824            75.8x             39.71x
+  2000       13.186        313.850          nan             nanx             23.80x
+  3000       51.817        712.122          nan             nanx             13.74x
+  5000      216.536       1993.355          nan             nanx              9.21x
+
+==============================================================================
+INTERPRETATION
+==============================================================================
+- ratio(numba/chol) > 1 means Cholesky is faster by that factor.
+- ratio(numba/chol) < 1 means CRISP is faster by 1/ratio.
+- Crossover = N at which ratio(numba/chol) crosses 1.0.
+
+Paper claim (Remark rem:wall_clock):
+  - At N=500, Cholesky 5-10x faster.
+  - Single-solve crossover at N~3000-5000.
+
+Measured values:
+  N=500: ratio=47.33x  -> Cholesky faster than paper claims (47.3x vs 5-10x)
+  N=3000: ratio=13.74x  -> Cholesky still 13.74x faster
+  N=5000: ratio=9.21x  -> Cholesky still 9.21x faster
+
+==============================================================================
+BACKTEST-AMORTIZED (360 rebalance dates, median per-solve)
+==============================================================================
+Each date: re-estimate Sigma from fresh data, re-solve from scratch.
+(Cholesky cannot reuse its factorization across dates.)
+
+     N       Cholesky    CRISP-numba      ratio
+-----------------------------------------------
+   500         0.515ms        18.218ms     35.39x
+  1000         2.571ms        76.486ms     29.75x
+  2000        64.852ms       404.409ms      6.24x
+  3000       342.658ms       952.371ms      2.78x
+
+==============================================================================
+NOTES
+==============================================================================
+1. Pure-Python CRISP is ~100x slower than Numba-compiled; its timing
+   is a reference ceiling, not the paper's claim.
+2. The paper's claims in Remark rem:wall_clock assume compiled CRISP
+   (Numba/Cython/C) against LAPACK Cholesky with BLAS-3 throughput.
+3. Crossover depends on hardware: BLAS-3 / BLAS-1 GFLOPS ratio varies
+   from ~3x to ~20x across systems.
+4. CRISP here runs at gamma=0.5 with p=100 sweeps (paper's default
+   recommendation). Cholesky solves the raw Sigma system Sigma w = mu.
+   These solve different linear systems and produce different portfolios;
+   the comparison is between two end-to-end solver pipelines, which is
+   what a practitioner would actually do.

@@ -22,7 +22,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from study import (make_structured_cov, case_9_worst_case_highcond,
                    method_b_solve, dir_err, _kappa_corr)
 

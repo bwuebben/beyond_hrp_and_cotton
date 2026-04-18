@@ -18,7 +18,7 @@ import csv
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
 RESDIR = os.path.join(ROOT, "results", "sec10")
 
 

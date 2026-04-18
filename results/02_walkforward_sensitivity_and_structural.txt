@@ -157,7 +157,7 @@ A1 and A3b cosine vs w_oracle (mu = structured sector tilts)
 
   T = 60:
 Traceback (most recent call last):
-  File "/Users/bwuebben/git/papers_ai_1/cotton_schur/walkforward.py", line 147, in <module>
+  File "walkforward.py", line 147, in <module>
     print(f"    A1 g=0.5  Sharpe = {np.nanmean(results['A1 g=0.5']):+.3f}, "
                                                ~~~~~~~^^^^^^^^^^^^
 KeyError: 'A1 g=0.5'

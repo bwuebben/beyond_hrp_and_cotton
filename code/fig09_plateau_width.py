@@ -32,7 +32,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
 RESDIR = os.path.join(ROOT, "results", "sec09_adaptive")
 OUT = os.path.join(ROOT, "figures", "output", "fig09_plateau_width.pdf")
 

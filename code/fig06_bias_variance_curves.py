@@ -26,7 +26,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
 DATA = os.path.join(ROOT, "results", "sec09_adaptive", "lgamma_curves.npz")
 OUT = os.path.join(ROOT, "figures", "output", "fig06_bias_variance_curves.pdf")
 

@@ -1,0 +1,14 @@
+[project]
+name = "beyond-hrp-and-cotton"
+version = "0.1.0"
+description = "Reproducibility repository for 'Beyond HRP and Cotton: Hierarchical and Iterative Methods for General Mean-Variance Portfolios'"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+    { name = "Bernd J. Wuebben", email = "wuebben@gmail.com" },
+]
+dependencies = [
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.4",
+    "scipy>=1.17.1",
+]

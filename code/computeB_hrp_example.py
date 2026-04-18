@@ -32,7 +32,7 @@ from scipy.cluster.hierarchy import linkage
 from scipy.spatial.distance import squareform
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, ROOT)
 
 from study import build_hrp_tree, hrp_flat_weights  # noqa: E402
