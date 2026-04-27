@@ -2,7 +2,7 @@
 
 Reproducibility repository for the paper
 
-> **Beyond HRP and Cotton: Hierarchical and Iterative Methods for General Mean-Variance Portfolios**
+> **Beyond De Prado and Cotton: Hierarchical and Iterative Methods for General Mean-Variance Portfolios**
 > Bernd J. Wuebben
 
 This directory contains the Python code that produced every figure, table, and
