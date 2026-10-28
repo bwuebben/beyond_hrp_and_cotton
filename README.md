@@ -4,6 +4,9 @@ Reproducibility repository for the paper
 
 > **Beyond De Prado and Cotton: Hierarchical and Iterative Methods for General Mean-Variance Portfolios**
 > Bernd J. Wuebben
+> arXiv:2604.23833 [q-fin.PM], https://arxiv.org/abs/2604.23833 (DOI 10.48550/arXiv.2604.23833)
+
+Paper page: https://bwuebben.github.io/papers/beyond-de-prado-and-cotton/
 
 This directory contains the Python code that produced every figure, table, and
 numerical result quoted in the paper, together with the committed result
@@ -25,11 +28,11 @@ compares:
 - **HRP-mu** — a transparent, signal-aware extension of HRP that replaces
   the flat IVP representative with the *signed* IVP (Section 4);
 - **HRP-Sigma-mu** — the stronger tree-based allocator that uses a full
-  local MVO representative with `L^1` budget normalization (Section 4b);
+  local MVO representative with `L^1` budget normalization (Section 4.4);
 - **CRISP** — a Gauss-Seidel iterative shrinkage solver on the shrunk
   system `P_gamma w = mu` (Section 5), the paper's headline general-`mu`
   replacement for Cotton;
-- and an **adaptive-gamma** rule derived in Section 6.5,
+- and an **adaptive-gamma** rule derived in Section 7.4,
   `gamma* approx 1 / (1 + c * kappa(C)^2 * (N/T) / IC^2)`.
 
 The appendices additionally document **Method A1** and **Method A2** as
@@ -51,7 +54,7 @@ original `method_a*` / `method_b_*` identifiers. The mapping is:
 | Paper name        | Code symbol                                | Status in paper                  |
 |---|---|---|
 | **HRP-mu**        | `method_a3_weights` (in `study.py`)        | Section 4 — signed-IVP HRP extension |
-| **HRP-Sigma-mu**  | `method_a1_l1_weights` (in `study.py`)     | Section 4b — local-MVO with `L^1` normalization |
+| **HRP-Sigma-mu**  | `method_a1_l1_weights` (in `study.py`)     | Section 4.4 — local-MVO with `L^1` normalization |
 | **CRISP**         | `method_b_solve` (in `study.py`)           | Section 5 — Gauss-Seidel iterative solver |
 | Method A1         | `method_a1_weights` (in `study.py`)        | Appendix C — sign-flip pathology (negative result) |
 | Method A2         | `method_a2_weights` (in `study.py`)        | Appendix A/E — flat-IVP instability (negative result) |
@@ -83,17 +86,18 @@ Scripts are named by the section of the paper they feed:
 | `computeC_*`, `figC_*` | Method A1 sign pathology (negative result) | Appendix C |
 | `computeE_*` | HRP-Sigma-mu (`a1_l1`) and Method A2 robustness panels | Appendix E |
 | `fig05_*` | CRISP shrinkage-operator / Gauss-Seidel diagnostics | Section 5 |
-| `fig06_*` | Bias-variance curves, adaptive-gamma trajectory | Section 6 |
-| `compute09_*`, `fig09_*` | Adaptive gamma calibration, sweep regularization | Section 9 |
-| `compute10_*`, `fig10_*`, `emit10_tables.py` | CRSP-analog backtest | Section 10 |
+| `fig06_*` | Bias-variance curves, shrinkage trajectory | Section 6 |
+| `compute09_*`, `fig09_*` | Adaptive gamma calibration, sweep regularization | Section 10 (plateau-width figure: Section 7) |
+| `compute10_*`, `fig10_*`, `emit10_tables.py` | CRSP-analog backtest | not in the arXiv version (see note below) |
 
 Within scripts, `method_a3_weights` is **HRP-mu**, `method_a1_l1_weights`
 is **HRP-Sigma-mu**, and `method_b_solve` is **CRISP** — see the name
 map above.
 
-Every script writes its outputs under `results/` (or a section-specific
-subdirectory such as `results/sec09_adaptive/` or `results/sec10/`) and is
-runnable from the project root, e.g.
+Data outputs are printed or written under `results/` (or a section-specific
+subdirectory such as `results/sec09_adaptive/` or `results/sec10/`); figure
+PDFs are written under `figures/output/` (`output/` for `fig05_*` and
+`fig06_trajectory.py`). Every script is runnable from the project root, e.g.
 
 ```bash
 python code/compute09_adaptive_gamma.py
@@ -125,13 +129,13 @@ can be checked directly:
 | `04_minvar_mc_*` | Monte Carlo minimum-variance comparison (with and without Cotton / HRP-Sigma-mu) |
 | `appendix_c_with_a1l1.txt` | Appendix C numbers including the HRP-Sigma-mu (`a1_l1`) variant |
 | `appendix_e_a1l1_robustness.txt` | Appendix E robustness block for HRP-Sigma-mu (`a1_l1`) |
-| `11_bench_crisp_vs_cholesky.txt` | CRISP-vs-Cholesky wall-clock benchmark (Remark `rem:wall_clock`) |
+| `11_bench_crisp_vs_cholesky.txt` | CRISP-vs-Cholesky wall-clock benchmark (Remark 5.7) |
 
 Note on filenames: historical result artifacts use the code's original
 identifiers (`a1_l1`, `method_b`); under the paper's current naming these
 correspond to HRP-Sigma-mu and CRISP respectively.
 
-Section 9 and Section 10 pipelines additionally populate
+The `compute09_*` and `compute10*` pipelines additionally populate
 `results/sec09_*/` and `results/sec10/` when the corresponding `compute*`
 scripts are run.
 
@@ -162,11 +166,11 @@ python code/figC_a1_cosine_histogram.py
 # Section 5 — CRISP shrinkage diagnostics
 python code/fig05_shrinkage_schematic.py
 
-# Section 6 — bias-variance and adaptive-gamma trajectory
+# Section 6 — bias-variance and shrinkage trajectory
 python code/fig06_bias_variance_curves.py
 python code/fig06_trajectory.py
 
-# Section 9 — adaptive gamma calibration + sweep regularization
+# Section 10 — adaptive gamma calibration + sweep regularization
 python code/compute09_adaptive_gamma.py
 python code/compute09_sweep_regularization.py
 python code/fig09_sweep_heatmap.py
@@ -176,7 +180,7 @@ python code/fig09_plateau_width.py
 python code/fig09_sharpe_vs_T.py
 python code/compute09_table_numbers.py
 
-# Section 10 — CRSP-analog backtest
+# CRSP-analog backtest (not in the arXiv version; see note below)
 python code/compute10_crsp_backtest.py
 python code/compute10b_adaptive_gamma.py
 python code/emit10_tables.py
@@ -186,18 +190,27 @@ python code/fig10_gamma_t_series.py
 python code/fig10_adaptive_rolling_diff.py
 ```
 
-All scripts are seeded (typically seed `42`, or `20260411` for the Section 10
+Appendix D.5 of the paper gives the headline commands as `python3 code/study.py`
+and `python3 code/walkforward.py` and places the figure scripts under
+`figures/code/`. In this repository `study.py` and `walkforward.py` are at the
+project root (`python study.py`, `python walkforward.py`), and all figure
+scripts are in `code/`.
+
+All scripts are seeded (typically seed `42`, or `20260411` for the CRSP-analog
 backtest) so results are bit-reproducible on a given `numpy` / BLAS stack.
 
 ### A note on CRSP data
 
-Section 10's backtest is **self-contained**: because direct CRSP access was
-not available in the writing environment, `compute10_crsp_backtest.py`
+The CRSP-analog backtest is **self-contained** and uses no CRSP data:
+`compute10_crsp_backtest.py`
 simulates a Russell-1000-analog universe from a 1-market + 10-sector factor
 model (500 assets, monthly returns Jan 1995 – Dec 2024) and runs the full
-backtest protocol on the synthetic data. The paper flags this explicitly; the
+backtest protocol on the synthetic data. The
 construction is designed so that allocation-rule differences are the only
-thing that varies across methods.
+thing that varies across methods. This backtest is not part of the arXiv
+version (v1) of the paper, which reports synthetic Monte Carlo and in-sample
+diagnostics only and lists a CRSP- or Russell-style backtest as future work
+(Section 11.6).
 
 ---
 
@@ -206,8 +219,9 @@ thing that varies across methods.
 If you use this code or the results, please cite the paper:
 
 ```
-Wuebben, B. J. (2026). Beyond HRP and Cotton: Hierarchical and Iterative
-Methods for General Mean-Variance Portfolios.
+Wuebben, B. J. (2026). Beyond De Prado and Cotton: Hierarchical and Iterative
+Methods for General Mean-Variance Portfolios. arXiv:2604.23833 [q-fin.PM].
+https://doi.org/10.48550/arXiv.2604.23833
 ```
 
 ---
